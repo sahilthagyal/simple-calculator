@@ -11,6 +11,9 @@
         <form method="POST">
             {% csrf_token %}
 
+            <!-- Hidden field to send button value to Django -->
+            <input type="hidden" name="btn" id="btn-hidden">
+
             <!-- Expression and Result -->
             <input type="text" name="expression" class="display" value="{{ expression }}" readonly />
             <input type="text" class="result" value="{{ result }}" readonly />
@@ -39,7 +42,7 @@
                 <!-- "=" triggers form submit -->
                 <button class="op" type="button" name="btn" value="=">=</button>
 
-                <!-- Clear and Backspace (no reload) -->
+                <!-- Clear and Backspace -->
                 <button class="clear" type="button" name="btn" value="C">C</button>
                 <button class="clear" type="button" name="btn" value="backspace">⌫</button>
             </div>
@@ -50,6 +53,7 @@
     <script>
         const display = document.querySelector('input[name="expression"]');
         const resultField = document.querySelector('input.result');
+        const hiddenBtn = document.getElementById("btn-hidden");
         const form = document.querySelector('form');
 
         document.querySelectorAll('button[name="btn"]').forEach(btn => {
@@ -57,18 +61,19 @@
                 let val = this.value;
 
                 if (val === "=") {
-                    // submit form to Django for evaluation
-                    form.submit();
+                    hiddenBtn.value = "=";
+                    form.submit();        // send to Django
                 }
                 else if (val === "C") {
-                    display.value = "";
-                    resultField.value = "";
+                    hiddenBtn.value = "C";
+                    form.submit();        // send to Django
                 }
                 else if (val === "backspace") {
-                    display.value = display.value.slice(0, -1);
+                    hiddenBtn.value = "backspace";
+                    form.submit();        // send to Django
                 }
                 else {
-                    display.value += val;
+                    display.value += val;  // no reload
                 }
             });
         });
