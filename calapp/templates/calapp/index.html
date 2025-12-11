@@ -10,37 +10,69 @@
     <div class="calc-container">
         <form method="POST">
             {% csrf_token %}
+
             <!-- Expression and Result -->
             <input type="text" name="expression" class="display" value="{{ expression }}" readonly />
             <input type="text" class="result" value="{{ result }}" readonly />
 
             <div class="buttons">
                 <!-- Number buttons -->
-                <button type="submit" name="btn" value="7">7</button>
-                <button type="submit" name="btn" value="8">8</button>
-                <button type="submit" name="btn" value="9">9</button>
-                <button class="op" type="submit" name="btn" value="/">/</button>
+                <button type="button" name="btn" value="7">7</button>
+                <button type="button" name="btn" value="8">8</button>
+                <button type="button" name="btn" value="9">9</button>
+                <button class="op" type="button" name="btn" value="/">/</button>
 
-                <button type="submit" name="btn" value="4">4</button>
-                <button type="submit" name="btn" value="5">5</button>
-                <button type="submit" name="btn" value="6">6</button>
-                <button class="op" type="submit" name="btn" value="*">*</button>
+                <button type="button" name="btn" value="4">4</button>
+                <button type="button" name="btn" value="5">5</button>
+                <button type="button" name="btn" value="6">6</button>
+                <button class="op" type="button" name="btn" value="*">*</button>
 
-                <button type="submit" name="btn" value="1">1</button>
-                <button type="submit" name="btn" value="2">2</button>
-                <button type="submit" name="btn" value="3">3</button>
-                <button class="op" type="submit" name="btn" value="-">-</button>
+                <button type="button" name="btn" value="1">1</button>
+                <button type="button" name="btn" value="2">2</button>
+                <button type="button" name="btn" value="3">3</button>
+                <button class="op" type="button" name="btn" value="-">-</button>
 
-                <button type="submit" name="btn" value="0">0</button>
-                <button type="submit" name="btn" value=".">.</button>
-                <button class="op" type="submit" name="btn" value="+">+</button>
-                <button class="op" type="submit" name="btn" value="=">=</button>
+                <button type="button" name="btn" value="0">0</button>
+                <button type="button" name="btn" value=".">.</button>
+                <button class="op" type="button" name="btn" value="+">+</button>
 
-                <!-- Clear and Backspace -->
-                <button class="clear" type="submit" name="btn" value="C">C</button>
-                <button class="clear" type="submit" name="btn" value="backspace">⌫</button>
+                <!-- "=" triggers form submit -->
+                <button class="op" type="button" name="btn" value="=">=</button>
+
+                <!-- Clear and Backspace (no reload) -->
+                <button class="clear" type="button" name="btn" value="C">C</button>
+                <button class="clear" type="button" name="btn" value="backspace">⌫</button>
             </div>
         </form>
     </div>
+
+    <!-- JavaScript to prevent reload -->
+    <script>
+        const display = document.querySelector('input[name="expression"]');
+        const resultField = document.querySelector('input.result');
+        const form = document.querySelector('form');
+
+        document.querySelectorAll('button[name="btn"]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                let val = this.value;
+
+                if (val === "=") {
+                    // submit form to Django for evaluation
+                    form.submit();
+                }
+                else if (val === "C") {
+                    display.value = "";
+                    resultField.value = "";
+                }
+                else if (val === "backspace") {
+                    display.value = display.value.slice(0, -1);
+                }
+                else {
+                    display.value += val;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
