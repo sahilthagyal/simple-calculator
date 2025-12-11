@@ -11,10 +11,10 @@
         <form method="POST">
             {% csrf_token %}
 
-            <!-- Hidden field to send button value to Django -->
+            <!-- Hidden input to send "=" button -->
             <input type="hidden" name="btn" id="btn-hidden">
 
-            <!-- Expression and Result -->
+            <!-- Display fields -->
             <input type="text" name="expression" class="display" value="{{ expression }}" readonly />
             <input type="text" class="result" value="{{ result }}" readonly />
 
@@ -23,33 +23,33 @@
                 <button type="button" name="btn" value="7">7</button>
                 <button type="button" name="btn" value="8">8</button>
                 <button type="button" name="btn" value="9">9</button>
-                <button class="op" type="button" name="btn" value="/">/</button>
+                <button type="button" name="btn" value="/">/</button>
 
                 <button type="button" name="btn" value="4">4</button>
                 <button type="button" name="btn" value="5">5</button>
                 <button type="button" name="btn" value="6">6</button>
-                <button class="op" type="button" name="btn" value="*">*</button>
+                <button type="button" name="btn" value="*">*</button>
 
                 <button type="button" name="btn" value="1">1</button>
                 <button type="button" name="btn" value="2">2</button>
                 <button type="button" name="btn" value="3">3</button>
-                <button class="op" type="button" name="btn" value="-">-</button>
+                <button type="button" name="btn" value="-">-</button>
 
                 <button type="button" name="btn" value="0">0</button>
                 <button type="button" name="btn" value=".">.</button>
-                <button class="op" type="button" name="btn" value="+">+</button>
+                <button type="button" name="btn" value="+">+</button>
 
-                <!-- "=" triggers form submit -->
+                <!-- ONLY "=" reloads -->
                 <button class="op" type="button" name="btn" value="=">=</button>
 
-                <!-- Clear and Backspace -->
+                <!-- C & backspace = no reload -->
                 <button class="clear" type="button" name="btn" value="C">C</button>
                 <button class="clear" type="button" name="btn" value="backspace">⌫</button>
             </div>
         </form>
     </div>
 
-    <!-- JavaScript to prevent reload -->
+    <!-- JS section -->
     <script>
         const display = document.querySelector('input[name="expression"]');
         const resultField = document.querySelector('input.result');
@@ -57,23 +57,22 @@
         const form = document.querySelector('form');
 
         document.querySelectorAll('button[name="btn"]').forEach(btn => {
-            btn.addEventListener('click', function () {
-                let val = this.value;
+            btn.addEventListener('click', () => {
+                let val = btn.value;
 
                 if (val === "=") {
-                    hiddenBtn.value = "=";
-                    form.submit();        // send to Django
-                }
+                    hiddenBtn.value = "=";  // send "=" to backend
+                    form.submit();         // reload ONLY for equal
+                } 
                 else if (val === "C") {
-                    hiddenBtn.value = "C";
-                    form.submit();        // send to Django
-                }
+                    display.value = "";     // clear without reload
+                    resultField.value = "";
+                } 
                 else if (val === "backspace") {
-                    hiddenBtn.value = "backspace";
-                    form.submit();        // send to Django
-                }
+                    display.value = display.value.slice(0, -1);
+                } 
                 else {
-                    display.value += val;  // no reload
+                    display.value += val;   // add number/operator
                 }
             });
         });
